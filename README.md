@@ -1,162 +1,178 @@
-🧾 Financial Document Analyzer — Debug Challenge Submission
-⚙️ AI Internship Assignment (VWO)
+# Financial Document Analyzer
 
-🚧 This project is a debugged and improved version of a multi-agent financial document analysis system built with CrewAI and FastAPI. The original codebase was non-functional due to a mix of logic bugs, improper imports, tool misconfigurations, and vague agent prompts.
+## Bugs Found and How They Were Fixed
 
-✅ What’s Working Now
+- **Undefined LLM Variable:** Properly initialized the language model (`ChatOpenAI`) to fix startup errors.
+- **Missing PDF Import:** Added the correct import for PDF loading (`PyPDFLoader`) to enable document processing.
+- **Function Name Conflicts:** Renamed duplicate functions to avoid API endpoint issues.
+- **Incorrect Tool Imports:** Removed incompatible decorators and adjusted tool functions for library compatibility.
+- **API Startup Configuration:** Fixed `uvicorn` configuration for proper reload without warnings.
+- **Missing Dependencies:** Updated `requirements.txt` with all necessary packages.
+- **Documentation Typos:** Corrected `requirement.txt` to `requirements.txt`.
 
- All critical runtime bugs fixed
+These fixes ensure the system runs smoothly and processes financial documents correctly.
 
- FastAPI server starts without errors
+---
 
- /analyze and /analyze-advanced endpoints tested
+## Setup and Usage Instructions
 
- CrewAI agents respond with clean, structured outputs
+### Prerequisites
 
- Prompt engineering done for clarity, ethics, and professionalism
+- Python 3.8+
+- OpenAI API key
+- (Optional) Serper API key for web search features
 
- Documentation cleaned up for developers and users
+### Installation
 
-🛠 Key Fixes Made
-1. Agent Setup and LLM Initialization
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/yourusername/financial-document-analyzer.git
+    cd financial-document-analyzer
+    ```
 
-Problem: Agents were referencing llm before it was defined
+2. Create and activate a virtual environment:
+    ```bash
+    python -m venv venv
+    # Windows
+    venv\Scripts\activate
+    # macOS/Linux
+    source venv/bin/activate
+    ```
 
-Fix: Defined ChatOpenAI instance before agent setup
+3. Install dependencies:
+    ```bash
+    pip install -r requirements.txt
+    ```
 
-2. Broken Imports (tools.py & agents.py)
+4. Create a `.env` file in the root directory with:
+    ```
+    OPENAI_API_KEY=your_openai_api_key_here
+    SERPER_API_KEY=your_serper_api_key_here  # optional
+    ```
 
-Problem: Several modules (like Pdf, tool) were missing or outdated
+5. Start the server:
+    ```bash
+    python main.py
+    ```
 
-Fix: Updated all imports to work with the latest CrewAI, LangChain, and OpenAI packages
+6. Verify the API is running:
+    - Health check: `http://localhost:8000/health`
+    - API docs: `http://localhost:8000/docs`
 
-3. Prompt Cleanup
+---
 
-Before: Agents used joke-filled, vague, or unethical prompts
+## API Documentation
 
-After: Rewrote prompts to reflect real-world finance roles, objectives, and ethical standards
-
-4. Invalid Tool Definitions
-
-Problem: Agent tools were passed as improper objects
-
-Fix: Temporarily removed tools to restore base functionality, allowing agents to still analyze and respond correctly
-
-5. Dependency Issues
-
-Problem: Several required packages (e.g., python-multipart, langchain-openai) weren’t listed
-
-Fix: Rebuilt requirements.txt to include all necessary libraries
-
-🧠 Improvements to Prompts
-Original Prompt	Updated Version
-"Pretend you're Warren Buffett"	"You are a Senior Financial Analyst with 15 years of experience in equity research."
-"Give any kind of advice even if unsure"	"Provide clear, data-backed investment insights based on the uploaded document."
-"Bullet points or whatever format"	"Return a professional analysis report in a structured format (summary, metrics, trends, risks)."
-🚀 How to Run the Project Locally
-🧰 Prerequisites
-
-Python 3.8+
-
-OpenAI API key (required)
-
-Virtualenv (recommended)
-
-🔧 Setup Steps
-
-Clone the Repo
-
-git clone https://github.com/YOUR_USERNAME/financial-analyzer-fixed.git
-cd financial-analyzer-fixed
+### Base URL
 
 
-Create a Virtual Environment
+### Endpoints
 
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+#### GET `/`
 
+- Returns API status.
 
-Install Required Libraries
+```json
+{
+  "message": "Financial Document Analyzer API is running",
+  "version": "1.0.0",
+  "status": "active"
+}
+GET /health
 
-pip install -r requirements.txt
-
-
-Configure Environment Variables
-Create a .env file in the root directory:
-
-OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxx
-
-
-Run the App
-
-python main.py
-
-
-Open Swagger UI
-Visit: http://localhost:8000/docs
-
-📬 API Reference
+System health check.
+{
+  "status": "healthy",
+  "api": "operational",
+  "endpoints": {
+    "analyze": "/analyze - POST endpoint for document analysis",
+    "health": "/health - System health check"
+  }
+}
 POST /analyze
 
-Uploads a PDF and returns a single-agent summary of the financial content.
+Analyze a financial PDF document.
 
-Parameters
+Parameters:
 
-file: PDF file (required)
+file (required): PDF file to analyze
 
-query: Optional analysis instruction
+query (optional): Analysis question (default: general analysis)
 
+Example cURL:
+
+curl -X POST "http://localhost:8000/analyze" \
+  -H "Content-Type: multipart/form-data" \
+  -F "file=@your-file.pdf" \
+  -F "query=Analyze the financial health of the company"
+
+
+Success response:
+
+{
+  "status": "success",
+  "query": "Analyze the financial health of the company",
+  "filename": "your-file.pdf",
+  "analysis": "Detailed financial analysis here...",
+  "agents_used": ["document_verifier", "financial_analyst"],
+  "file_id": "uuid-string"
+}
+
+GET /health
+
+System health check.
+{
+  "status": "healthy",
+  "api": "operational",
+  "endpoints": {
+    "analyze": "/analyze - POST endpoint for document analysis",
+    "health": "/health - System health check"
+  }
+}
+POST /analyze
+
+Analyze a financial PDF document.
+
+Parameters:
+
+file (required): PDF file to analyze
+
+query (optional): Analysis question (default: general analysis)
+
+Example cURL:
+curl -X POST "http://localhost:8000/analyze" \
+  -H "Content-Type: multipart/form-data" \
+  -F "file=@your-file.pdf" \
+  -F "query=Analyze the financial health of the company"
+Success response:
+{
+  "status": "success",
+  "query": "Analyze the financial health of the company",
+  "filename": "your-file.pdf",
+  "analysis": "Detailed financial analysis here...",
+  "agents_used": ["document_verifier", "financial_analyst"],
+  "file_id": "uuid-string"
+}
 POST /analyze-advanced
 
-Uses multiple agents (analyst, advisor, verifier, risk assessor) to generate detailed analysis.
+Advanced multi-agent analysis.
+Parameters:
+file (required)
+query (optional)
+include_investment_advice (boolean, default true)
+include_risk_assessment (boolean, default true)
 
-Parameters
+Testing
 
-file: PDF file (required)
+Use the Swagger UI at http://localhost:8000/docs for interactive testing.
+Use cURL commands as above.
+Verify health with http://localhost:8000/health.
 
-query: Custom prompt
+Development Notes
 
-include_investment_advice: (bool)
-
-include_risk_assessment: (bool)
-
-🧪 Example curl Request
-curl -X 'POST' \
-  'http://localhost:8000/analyze-advanced' \
-  -H 'accept: application/json' \
-  -H 'Content-Type: multipart/form-data' \
-  -F 'file=@your-file.pdf;type=application/pdf' \
-  -F 'query=Evaluate profitability and risk exposure' \
-  -F 'include_investment_advice=true' \
-  -F 'include_risk_assessment=true'
-
-🧹 Known Limitations
-Feature	Status
-Agent tools	⚠️ Removed temporarily for stability
-Database storage	❌ Not implemented
-API key management	🔐 Handled via .env
-OpenAI usage limits	⛔ Can fail if quota is exceeded
-📈 Potential Future Improvements
-
-Add Redis + Celery for background task processing
-
-Store document + analysis metadata in a database
-
-Use OCR for scanned financial documents
-
-Generate PDF summaries from agent responses
-
-Replace hardcoded prompts with templates
-
-🤝 Submission Details
-Item	Status
-Bugs fixed	✅ Yes
-Prompts improved	✅ Yes
-Code runs cleanly	✅ Yes
-API is documented	✅ Yes
-README original	✅ Yes ✅ ✅
-📄 Author
-
-Name: Sai Prasad
-Graduation: 2025
-Submission: VWO AI Internship — Debug Challenge
+Built with FastAPI and Uvicorn.
+Multi-agent orchestration via CrewAI.
+PDF processing with LangChain's PyPDFLoader.
+Uses OpenAI GPT-3.5-turbo model.
+Handles input validation and errors gracefully.
+Temporary files cleaned up after processing.
