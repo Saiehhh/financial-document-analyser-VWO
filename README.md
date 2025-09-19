@@ -73,14 +73,12 @@ These fixes ensure the system runs smoothly and processes financial documents co
 - Returns API status.
 
 ```json
-{
-  "message": "Financial Document Analyzer API is running",
-  "version": "1.0.0",
-  "status": "active"
-}
 GET /health
 
 System health check.
+
+Response:
+
 {
   "status": "healthy",
   "api": "operational",
@@ -89,6 +87,7 @@ System health check.
     "health": "/health - System health check"
   }
 }
+
 POST /analyze
 
 Analyze a financial PDF document.
@@ -118,61 +117,40 @@ Success response:
   "file_id": "uuid-string"
 }
 
-GET /health
-
-System health check.
-{
-  "status": "healthy",
-  "api": "operational",
-  "endpoints": {
-    "analyze": "/analyze - POST endpoint for document analysis",
-    "health": "/health - System health check"
-  }
-}
-POST /analyze
-
-Analyze a financial PDF document.
-
-Parameters:
-
-file (required): PDF file to analyze
-
-query (optional): Analysis question (default: general analysis)
-
-Example cURL:
-curl -X POST "http://localhost:8000/analyze" \
-  -H "Content-Type: multipart/form-data" \
-  -F "file=@your-file.pdf" \
-  -F "query=Analyze the financial health of the company"
-Success response:
-{
-  "status": "success",
-  "query": "Analyze the financial health of the company",
-  "filename": "your-file.pdf",
-  "analysis": "Detailed financial analysis here...",
-  "agents_used": ["document_verifier", "financial_analyst"],
-  "file_id": "uuid-string"
-}
 POST /analyze-advanced
 
 Advanced multi-agent analysis.
+
 Parameters:
-file (required)
-query (optional)
-include_investment_advice (boolean, default true)
-include_risk_assessment (boolean, default true)
 
-Testing
+file (required): PDF document to analyze
 
-Use the Swagger UI at http://localhost:8000/docs for interactive testing.
-Use cURL commands as above.
-Verify health with http://localhost:8000/health.
+query (optional): Analysis question
 
-Development Notes
+include_investment_advice (boolean, default: true)
+
+include_risk_assessment (boolean, default: true)
+
+🧪 Testing
+
+Use the Swagger UI at http://localhost:8000/docs
+ for interactive testing.
+
+Test endpoints with the cURL commands above.
+
+Verify system health at http://localhost:8000/health
+.
+
+🏗️ Development Notes
 
 Built with FastAPI and Uvicorn.
+
 Multi-agent orchestration via CrewAI.
-PDF processing with LangChain's PyPDFLoader.
+
+PDF processing using LangChain's PyPDFLoader.
+
 Uses OpenAI GPT-3.5-turbo model.
+
 Handles input validation and errors gracefully.
-Temporary files cleaned up after processing.
+
+Temporary files are cleaned up automatically after processing.
